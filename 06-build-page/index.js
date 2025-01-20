@@ -71,13 +71,22 @@ function copyFiles(ToPath, dest) {
                     })
                 }
                 if(stats.isDirectory()) {
-                    fs.mkdir(path.join(dest, file), (err)=> {
-                        if(err) throw err
-                    })
-                    const newPath = path.join(ToPath, file);
-                    const newDest = path.join(dest, file)
-                    return copyFiles(newPath, newDest)
-                  
+                    const createFile = async () => {
+                        return await new Promise((resolve)=> {
+                            fs.mkdir(path.join(dest, file), (err)=> {
+                                if(err) throw err;
+                                resolve();
+                            })
+                        })
+                    }
+                    createFile()
+                    .then(() => {
+                        const newPath = path.join(ToPath, file);
+                        const newDest = path.join(dest, file);
+                        copyFiles(newPath, newDest)
+                    }
+                    )
+        
                 }
 
           })
