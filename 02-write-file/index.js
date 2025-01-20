@@ -1,29 +1,27 @@
-const path = require('path');
 const fs = require('fs');
-const Emitter = require('events')
- const emitter = new Emitter();
+const readline = require('readline');
+const path = require('path');
 
- const {stdin, stdout} = process;
+const writeStream = fs.createWriteStream(path.join(__dirname, 'output.txt'), { flags: 'a' });
 
- stdin.setEncoding('utf-8');
+const readInterface = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
- fs.writeFile(path.join(__dirname, 'text.txt'), '', (err)=> {
-    if(err) throw err
- })
+console.log('Hello! Type text');
+console.log('Type "exit" to quit.');
 
- stdout.write('type text')
-
- stdin.on('data', (data)=> {
-    fs.appendFile(path.join(__dirname, 'text.txt'), data + '\n', (err) => {
-
-        if (data.trim() === 'exit') {
-          stdout.write('\nyou typed in Exit. The process is finished')
-           return process.exit()
-     }
-    })
- })
-
- process.on('SIGINT', () => {
-    console.log('\nyou pressed  Ctrl + C. The process is finished');
+readInterface.on('line', (input) => {
+  if (input === 'exit') {
+    console.log('Goodbye!');
+    readInterface.close();  
     process.exit(); 
-  });
+  } else {
+    writeStream.write(input + '\n');
+  }
+});
+
+writeStream.on('error', (err) => {
+  console.error('Error writing to file:', err);
+});
