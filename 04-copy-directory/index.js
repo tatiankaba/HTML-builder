@@ -19,7 +19,7 @@ deleteExistedFilesCopy()
     
     fs.readdir(path.join(__dirname, 'files'), { encoding: 'utf-8' }, (err, files) => {
         if (err) {
-          console.error('Ошибка при чтении директории:', err);
+          console.error('mistake in reading', err);
           return;
         }
           files.forEach((file) => {
