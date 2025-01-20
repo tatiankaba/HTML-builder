@@ -1,12 +1,38 @@
 const fs = require('node:fs');
 const path= require('path');
+const Emitter = require('events')
+const emitter = new Emitter();
 
-
+const replaceTemplateTags = async () => {
+    const templatePath = path.join(__dirname, 'template.html');
+    const template = await fs.promises.readFile(templatePath, 'utf-8');
+    const regex = /\{\{([^}]+)\}\}/g; 
+  
+    const matches = [...template.matchAll(regex)];
+  
+    let updatedTemplate = template;
+  
+    for (let match of matches) {
+      const tagName = match[1]; 
+      const componentPath = path.join(__dirname, 'components', `${tagName}.html`);
+  
+      try {
+        const componentContent = await fs.promises.readFile(componentPath, 'utf-8');
+        updatedTemplate = updatedTemplate.replace(match[0], componentContent); 
+      } catch (err) {
+        console.error(`Error reading component for tag ${tagName}:`, err);
+      }
+    }
+  
+    await fs.promises.writeFile(path.join(__dirname, 'project-dist', 'index.html'), updatedTemplate);
+    console.log('index.html has been updated');
+  };
+  
 const createBundleFile = function () {
     return new Promise((resolve, reject)=> {
 
         try {
-            fs.writeFile(path.join(__dirname, 'project-dist','styles.css'),'', {recursive: true}, (err)=> {
+            fs.writeFile(path.join(__dirname, 'project-dist','style.css'),'', {recursive: true}, (err)=> {
                 if(err) throw err;
             })
             
@@ -86,7 +112,7 @@ deleteExistedFilesCopy()
                 if(stats.isFile() && path.extname(path.join(__dirname, 'styles', `${file}`)) === '.css') {
                     fs.readFile(path.join(__dirname, 'styles', `${file}`), {encoding: 'utf-8'}, (err,data)=> {
                         if(err) throw err;
-                        fs.appendFile(path.join(__dirname,  'project-dist', 'styles.css'), data + `\n`, (err)=> {
+                        fs.appendFile(path.join(__dirname,  'project-dist', 'style.css'), data + `\n`, (err)=> {
                             if (err) {
                                 console.log('mistake with copying file', err)
                             }
@@ -97,6 +123,9 @@ deleteExistedFilesCopy()
             })
         })
     })
+})
+.then(()=> {
+    replaceTemplateTags()
 })
 
 
