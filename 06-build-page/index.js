@@ -73,7 +73,7 @@ function copyFiles(ToPath, dest) {
                 if(stats.isDirectory()) {
                     const createFile = async () => {
                         return await new Promise((resolve)=> {
-                            fs.mkdir(path.join(dest, file), (err)=> {
+                            fs.mkdir(path.join(dest, file), { recursive: true }, (err)=> {
                                 if(err) throw err;
                                 resolve();
                             })
