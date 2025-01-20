@@ -46,8 +46,8 @@ const createBundleFile = function () {
     )};
 
 
-const deleteExistedFilesCopy = function () {
-    return new Promise((resolve)=> {
+const deleteExistedFilesCopy = async function () {
+    return await new Promise((resolve)=> {
             fs.rm(path.join(__dirname, 'project-dist'), { recursive: true, force: true }, (err) =>{
                 if(err) throw err;
                 resolve();
@@ -83,7 +83,7 @@ function copyFiles(ToPath, dest) {
                     .then(() => {
                         const newPath = path.join(ToPath, file);
                         const newDest = path.join(dest, file);
-                        copyFiles(newPath, newDest)
+                        return copyFiles(newPath, newDest)
                     }
                     )
         
