@@ -14,10 +14,9 @@ fs.readdir(folderPath, {encoding: 'utf-8'}, (err, data)=> {
               console.error(err);
               return;
             }
-           
             if(stats.isFile()) {
-              const fileName = file.split('.')[0].toString()
-                console.log(`${fileName} - ${path.extname(path.join(__dirname, 'secret-folder', `${file}`)).slice(1)} - ${stats.size}MB`)
+              const fileName = file.split('.')[0].toString();
+              console.log(`${fileName} - ${path.extname(path.join(__dirname, 'secret-folder', `${file}`)).slice(1)} - ${stats.size}B`)
             }
           });
     })
