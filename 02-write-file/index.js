@@ -25,3 +25,9 @@ readInterface.on('line', (input) => {
 writeStream.on('error', (err) => {
   console.error('Error writing to file:', err);
 });
+
+readInterface.on('SIGINT', () => {
+  console.log('Goodbye');
+  readInterface.close();
+  process.exit()
+});
